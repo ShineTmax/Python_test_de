@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "python-test-de"
+version = "0.1.0"
+description = ""
+authors = ["chorfi.sa <chorfi.sa@sfeir.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.13"
+pandas = "^2.2.3"
+pathlib = "^1.0.1"
+networkx = "^3.4.2"
+chardet = "^5.2.0"
+pytest = "^8.3.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
