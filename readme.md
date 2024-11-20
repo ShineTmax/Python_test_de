@@ -62,7 +62,7 @@ This project is designed to analyze and process data related to drugs, clinical 
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-repo/project-name.git
+git clone https://github.com/ShineTmax/python_test_de
 ```
 
 2. Navigate to the project directory:
