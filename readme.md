@@ -2,6 +2,7 @@
 This project is designed to analyze and process data related to drugs, clinical trials, and publications. It includes functionality for reading, processing, and extracting insights from datasets stored in CSV and JSON formats.
 
 ## Project Structure
+
 ``` 
 .
 ├── Data
@@ -52,21 +53,35 @@ This project is designed to analyze and process data related to drugs, clinical 
 - Identify the journal with the most unique drug mentions
 - Find related drugs based on shared journal publications
 
+### Data repository
+The Data/ repository used for the project contains :
+- drugs.csv: Contains the names of drugs with an ID (atccode) and a name (drug).
+- pubmed.csv: Contains titles of PubMed articles (title) associated with a journal (journal), a given date (date), and an ID (id).
+- pubmed.json: Contains the same structure as pubmed.csv but in JSON format.
+- clinical_trials.csv: Contains scientific publications with a title (scientific_title), an ID (id), a journal (journal), and a date (date).
+
+### Data Test repository
+The Data_test/ repository used for the tests is a sample data following the same schema of the original Data with different values:
+- drugs.csv
+- pubmed.csv
+- pubmed.json
+- clinical_trials.csv
+
 ## Getting Started
 
 ### Prerequisites
 - Python: Ensure Python is installed (here Python 3.13)
-- Poetry: Install Poetry for dependency management
+
 
 ### Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-repo/project-name.git
+git clone https://github.com/ShineTmax/python_test_de
 ```
 2. Navigate to the project directory:
 ```bash
-cd project-name
+cd python_test_de
 ```
 3. Create a virtualenv environment 
 ```bash
@@ -80,7 +95,7 @@ source venv/bin/activate
 ```
 pip install poetry
 ```
-6. Add dependancies to the pyprojet.toml
+6. Add necessary dependancies to the pyprojet.toml
 ```bash
 poetry add pandas@^2.2.3 pathlib@^1.0.1 chardet@^5.2.0 pytest@^8.3.3
 ```
