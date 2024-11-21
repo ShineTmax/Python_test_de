@@ -1,33 +1,45 @@
-import json
+import unittest
 from pathlib import Path
+import json
+from src.data_writting import write_data_to_json
+from tests import OUTPUT_TEST_FILEPATH
 
-def write_data_to_json(data, file_path):
+class TestDataWriting(unittest.TestCase):
     """
-    Write data to a JSON file, ensuring special characters are properly handled.
-    Args:
-        data: Data to be written to the file.
-        file_path: Path where the JSON file will be saved.
+    Unit test class for testing data writing functions.
+
+    This class tests the function `write_data_to_json`, which is responsible for writing data 
+    to a JSON file. The test ensures that the data is correctly written to the specified file 
+    and can be successfully loaded from that file.
+
+    Methods:
+        test_write_data_to_json: Tests the writing of data to a JSON file by checking if 
+                                  the file exists and if the data written is correct.
     """
-    # Ensure the parent directory exists
-    file_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Convert data to the correct format if necessary (e.g., handle non-ASCII characters)
-    def correct_encoding(text):
+    def test_write_data_to_json(self):
         """
-        Ensures special characters are properly handled by decoding escape sequences
-        and returning the correct Unicode string.
+        Test the writing of data to a JSON file.
+
+        This test ensures that the `write_data_to_json` function correctly writes the provided
+        data to a JSON file at the specified path (`OUTPUT_TEST_FILEPATH`). The test checks 
+        that the file exists after writing, and verifies that the data written into the file 
+        is correct.
+
+        Asserts:
+            - The output file exists after writing the data.
+            - The data written to the JSON file matches the expected content.
         """
-        if isinstance(text, str):
-            # This step ensures that any escape sequences (like \u00f4) are properly interpreted
-            return text.encode('utf-8').decode('unicode_escape')  # Decode any unicode escape sequences
-        return text
+        test_data = [{"drug": "Aspirin", "reference": {"pubmed": []}}]
+        write_data_to_json(test_data, OUTPUT_TEST_FILEPATH)
 
-    # Apply encoding to each field in the data (if needed)
-    if isinstance(data, list):  # If it's a dictionary
-        data = [{key: correct_encoding(value) for key, value in row.items()} for row in data]
-    elif isinstance(data, dict):  # If it's a dictionary
-        data = {key: correct_encoding(value) for key, value in data.items()}
+        # Assert that the output file exists
+        self.assertTrue(OUTPUT_TEST_FILEPATH.exists())
 
-    # Write the data to the JSON file
-    with open(file_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, default=str, indent=4)
+        # Assert that the data written to the file is correct
+        with open(OUTPUT_TEST_FILEPATH, 'r') as file:
+            data = json.load(file)
+            self.assertEqual(data[0]["drug"], "Aspirin")
+
+if __name__ == '__main__':
+    unittest.main()
