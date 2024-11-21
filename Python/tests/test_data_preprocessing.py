@@ -1,99 +1,60 @@
+import unittest
 import pandas as pd
+from src.data_reading import read_csv_file, read_json_file
+from src.data_preprocessing import clean_drugs, clean_clinical_trials
+from tests import INPUT_DRUGS_TEST_PATH, INPUT_CLINICAL_TRIALS_TEST_PATH
 
-def clean_drugs(data: pd.DataFrame) -> pd.DataFrame:
+class TestDataPreprocessing(unittest.TestCase):
     """
-    Convert 'atccode' and 'drug' columns to lowercase.
-    Args:
-        data (pd.DataFrame): Drug data.
-    Returns:
-        pd.DataFrame: Cleaned DataFrame.
+    Unit test class for testing the data preprocessing functions.
+    Specifically, this class tests the cleaning functions for drug data and clinical trials data.
+    It uses the unittest framework to validate the expected behavior of these functions.
+
+    Methods:
+        test_clean_drugs: Tests the cleaning of drug data by verifying that
+                           the 'atccode' and 'drug' columns contain only lowercase values.
+                           Asserts:
+                               - The 'atccode' column contains only lowercase values.
+                               - The 'drug' column contains only lowercase values.
+        test_clean_clinical_trials: Tests the cleaning of clinical trials data by checking that
+                                     the 'title' column does not contain backslashes ('\\').
+                                     Asserts:
+                                         - The 'title' column does not contain backslashes ('\\').
     """
-    data["atccode"] = data["atccode"].str.lower()
-    data["drug"] = data["drug"].str.lower()
-    return data
 
+    def test_clean_drugs(self):
+        """
+        Test the cleaning process for drug data.
 
-def clean_clinical_trials(data: pd.DataFrame) -> pd.DataFrame:
-    """
-    Clean clinical trials data (lowercase columns, format 'date').
-    Args:
-        data (pd.DataFrame): Clinical trials data.
-    Returns:
-        pd.DataFrame: Cleaned DataFrame.
-    """
-    data["id"] = data["id"].str.lower()
-    # Convert title to lowercase and get rid of words containing '\'
-    data["title"] = data["scientific_title"].apply(
-    lambda x: ' '.join(
-        [word.lower() if '\\' not in word else word.split("\\")[0].lower() for word in str(x).split()]
-    ) if isinstance(x, str) else x
-)
-    # Convert Journal to lowercase and get rid of words containing '\'
-    data["journal"] = data["journal"].apply(
-    lambda x: ' '.join(
-        [word.lower() if '\\' not in word else word.split("\\")[0].lower() for word in str(x).split()]
-    ) if isinstance(x, str) else x
-)
-    data["date"] = pd.to_datetime(data['date'], errors='coerce')
-    
-    
-    return data
+        This test ensures that after cleaning, the 'atccode' and 'drug' columns of the drug data
+        contain only lowercase values. It reads the drug data from the CSV file specified in 
+        INPUT_DRUGS_TEST_PATH, applies the `clean_drugs` function, and asserts that both columns 
+        are fully lowercase.
 
+        Asserts:
+            - The 'atccode' column contains only lowercase values.
+            - The 'drug' column contains only lowercase values.
+        """
+        test_data = read_csv_file(INPUT_DRUGS_TEST_PATH)
+        cleaned_data = clean_drugs(test_data)
+        self.assertTrue((cleaned_data["atccode"] == cleaned_data["atccode"].str.lower()).all())
+        self.assertTrue((cleaned_data["drug"] == cleaned_data["drug"].str.lower()).all())
 
-def clean_pubmed(data: pd.DataFrame) -> pd.DataFrame:
-    """
-    Clean PubMed data (lowercase columns, format 'date').
+    def test_clean_clinical_trials(self):
+        """
+        Test the cleaning process for clinical trials data.
 
-    Args:
-        data (pd.DataFrame): PubMed data.
+        This test ensures that after cleaning, the 'title' column of the clinical trials data
+        does not contain any backslashes ('\\'). It reads the clinical trials data from the 
+        CSV file specified in INPUT_CLINICAL_TRIALS_TEST_PATH, applies the `clean_clinical_trials`
+        function, and asserts that there are no backslashes in the 'title' column.
 
-    Returns:
-        pd.DataFrame: Cleaned DataFrame.
-    """
-    data["id"] = data["id"].astype("str").str.lower()
-    # Convert title to lowercase and get rid of words containing '\'
-    data["title"] = data["title"].apply(
-    lambda x: ' '.join(
-        [word.lower() if '\\' not in word else word.split("\\")[0].lower() for word in str(x).split()]
-    ) if isinstance(x, str) else x
-)
-    # Convert Journal to lowercase and get rid of words containing '\'
-    data["journal"] = data["journal"].apply(
-    lambda x: ' '.join(
-        [word.lower() if '\\' not in word else word.split("\\")[0].lower() for word in str(x).split()]
-    ) if isinstance(x, str) else x
-)
-    data["date"] = pd.to_datetime(data['date'], errors='coerce')
+        Asserts:
+            - The 'title' column does not contain backslashes ('\\').
+        """
+        test_data = read_csv_file(INPUT_CLINICAL_TRIALS_TEST_PATH)
+        cleaned_data = clean_clinical_trials(test_data)
+        self.assertFalse(cleaned_data["title"].str.contains("\\\\").any())
 
-    return data
-
-
-def clean_dataframes(dataframes) -> list[pd.DataFrame]:
-    """
-    Clean multiple DataFrames.
-    Args:
-        dataframes (list): List of DataFrames.
-    Returns:
-        list: List of cleaned DataFrames.
-    """
-    map_functions = [
-        (clean_drugs, dataframes[0]),
-        (clean_clinical_trials, dataframes[1]),
-        (clean_pubmed, dataframes[2]),
-        (clean_pubmed, dataframes[3])
-    ]
-    return [func(df) for func, df in map_functions]
-
-
-def concat_dataframes(df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
-    """
-    Concatenate two DataFrames.
-
-    Args:
-        df1 (pd.DataFrame): First DataFrame.
-        df2 (pd.DataFrame): Second DataFrame.
-
-    Returns:
-        pd.DataFrame: Concatenated DataFrame.
-    """
-    return pd.concat([df1, df2])
+if __name__ == '__main__':
+    unittest.main()
