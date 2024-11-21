@@ -62,29 +62,46 @@ This project is designed to analyze and process data related to drugs, clinical 
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/ShineTmax/python_test_de
+git clone https://github.com/your-repo/project-name.git
 ```
-
 2. Navigate to the project directory:
 ```bash
 cd project-name
 ```
-
+3. Create a virtualenv environment 
+```bash
+virtualenv venv
+```
 4. Access to the virtualenv:
 ```bash
 source venv/bin/activate
 ```
-4. Install dependencies using Poetry:
+5. Install poetry in the virtualenv
+```
+pip install poetry
+```
+6. Add dependancies to the pyprojet.toml
+```bash
+poetry add pandas@^2.2.3 pathlib@^1.0.1 chardet@^5.2.0 pytest@^8.3.3
+```
+7. Install dependencies using Poetry:
 ```bash
 poetry install
 ```
+
 ### Running the Project
 
-To execute the main script:
+- To execute the main script:
 ```bash
-poetry run python Python/main.py --function <function_number> [--target_drug <drug_name>] [--data <data_path>]
+poetry run python Python/main.py
 ```
 
+### Running ad-hoc functions
+
+- To execute Bonus functions
+```bash
+poetry run python Python/ad_hoc/bonus.py --function <function_number> [--target_drug <drug_name>] [--data <data_path>]
+```
 Example:
 ```bash
 poetry run python Python/main.py --function 1
@@ -97,6 +114,18 @@ Run all tests using Pytest:
 pytest
 ```
 
+### Running SQL queries
+
+SQL queries are stored in SQL/sql. However a sqlite database has been created in order to test the queries on the sample data.
+
+- run query 1
+```bash
+poetry run python SQL/python/query_1.py
+```
+- Run query 2
+```bash
+poetry run python SQL/python/query_2.py
+```
 ### Future Development 
 
 In the case of future developments, whether by using larger data volumes, adding more analytical features, or other extensions, it is recommended to leverage technologies for processing and transforming large datasets, such as Apache Spark, combined with a workflow orchestrator like Airflow to manage the data pipeline (e.g., periodic execution of processes and parallelization of certain tasks).
