@@ -1,43 +1,43 @@
+import unittest
 import pandas as pd
+from src.data_processing import find_mentions
 
-def find_mentions(drugs_df: pd.DataFrame, df: pd.DataFrame, source: str) -> list:
+class TestDataProcessing(unittest.TestCase):
     """
-    Finds mentions of drugs in a list of publications and returns the details of the matches.
+    Unit test class for testing the data processing functions, specifically
+    the `find_mentions` function. This class uses the unittest framework to 
+    validate the behavior of the `find_mentions` function that identifies 
+    mentions of drugs in publication data.
 
-    This function checks if each drug from the `drugs_df` DataFrame appears in the title of any publication
-    from the `df` DataFrame. If a match is found, it stores the drug name along with the corresponding 
-    publication details (title, journal, and date).
-
-    Args:
-        drugs_df (pd.DataFrame): A DataFrame containing information about drugs, with at least a 'drug' column.
-        df (pd.DataFrame): A DataFrame containing publication information, with at least 'title', 'journal', and 'date' columns.
-
-    Returns:
-        list: A list of dictionaries, each containing a drug name and the corresponding publications where the drug was mentioned.
+    Methods:
+        test_find_mentions: Tests the functionality of the `find_mentions` 
+                             function by checking if it correctly identifies 
+                             mentions of drugs in the given publication data.
     """
-    mentions = {}
 
-    for drug_row in drugs_df.itertuples():
-        drug_name = drug_row.drug
+    def test_find_mentions(self):
+        """
+        Test the `find_mentions` function.
 
-        # Initialize if the drug is not already in the mentions dictionary
-        if drug_name not in mentions:
-            mentions[drug_name] = {
-                "drug": drug_name,
-                "reference":{
-                    "pubmed": [],
-                    "clinical_trials": []
-                }
-            }
+        This test verifies that the `find_mentions` function accurately detects 
+        the presence of drug mentions in a set of publication data. It creates 
+        sample data for a single drug ("Aspirin") and a publication that mentions 
+        it. The test checks that the function returns the expected number of mentions 
+        and verifies the drug mentioned.
 
-        # Search for the drug in the publications
-        for publication_row in df.itertuples():
-            if drug_name in publication_row.title:
-                mentions[drug_name]["reference"][source].append({
-                    "title": publication_row.title,
-                    "journal": publication_row.journal,
-                    "date": publication_row.date
-                })
+        Asserts:
+            - That the number of mentions found is 1.
+            - That the mentioned drug is "Aspirin".
+        """
+        drugs_df = pd.DataFrame({"drug": ["Aspirin"]})
+        publications_df = pd.DataFrame({
+            "title": ["Research on Aspirin"],
+            "journal": ["Journal A"],
+            "date": ["2024-01-01"]
+        })
+        mentions = find_mentions(drugs_df, publications_df, source="pubmed")
+        self.assertEqual(len(mentions), 1)
+        self.assertEqual(mentions[0]["drug"], "Aspirin")
 
-    # Convert the dictionary to a list of dictionaries for the output
-    return list(mentions.values())
+if __name__ == '__main__':
+    unittest.main()
